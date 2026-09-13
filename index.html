@@ -1,0 +1,3160 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#526579">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="The Reading Society">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<title>The Reading Society</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+:root{
+    --blue:#aebed0;
+    --blue-dark:#526579;
+    --blue-light:#e7edf3;
+    --cream:#fbf7ef;
+    --cream-dark:#eee5d5;
+    --pink:#d9aeb7;
+    --pink-light:#f2dfe3;
+    --sage:#aeb9a5;
+    --gold:#b99a62;
+    --gold-light:#eadcbf;
+    --text:#344252;
+    --white:#fffdf9;
+    --shadow:0 10px 30px rgba(63,72,83,.10);
+    --radius:18px;
+}
+
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+body{
+    background:
+        radial-gradient(circle at top left,rgba(217,174,183,.18),transparent 28%),
+        radial-gradient(circle at bottom right,rgba(174,190,208,.22),transparent 30%),
+        var(--cream);
+    color:var(--text);
+    font-family:"DM Sans",sans-serif;
+    min-height:100vh;
+}
+
+button,input,textarea,select{
+    font:inherit;
+}
+
+button{
+    cursor:pointer;
+}
+
+.app{
+    display:flex;
+    min-height:100vh;
+}
+
+/* SIDEBAR */
+
+.sidebar{
+    width:250px;
+    background:rgba(255,253,249,.92);
+    border-right:1px solid var(--cream-dark);
+    padding:28px 18px;
+    position:fixed;
+    left:0;
+    top:0;
+    bottom:0;
+    z-index:20;
+    overflow-y:auto;
+}
+
+.logo{
+    text-align:center;
+    margin-bottom:28px;
+}
+
+.logo-small{
+    font-family:"Cormorant Garamond",serif;
+    font-size:13px;
+    letter-spacing:4px;
+    color:var(--gold);
+    text-transform:uppercase;
+}
+
+.logo h1{
+    font-family:"Cormorant Garamond",serif;
+    font-size:31px;
+    line-height:.95;
+    color:var(--blue-dark);
+    margin:7px 0;
+}
+
+.logo p{
+    font-family:"Cormorant Garamond",serif;
+    font-style:italic;
+    color:#8b7c73;
+    font-size:14px;
+}
+
+.nav{
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+}
+
+.nav button{
+    border:0;
+    background:transparent;
+    color:#65717d;
+    padding:12px 14px;
+    border-radius:13px;
+    text-align:left;
+    transition:.2s;
+}
+
+.nav button:hover{
+    background:var(--blue-light);
+}
+
+.nav button.active{
+    background:var(--blue);
+    color:white;
+    box-shadow:0 5px 15px rgba(82,101,121,.15);
+}
+
+.nav-icon{
+    width:25px;
+    display:inline-block;
+}
+
+.sidebar-bottom{
+    margin-top:30px;
+    padding-top:20px;
+    border-top:1px solid var(--cream-dark);
+}
+
+.level-mini{
+    background:var(--blue-light);
+    border-radius:14px;
+    padding:14px;
+}
+
+.level-mini strong{
+    font-family:"Cormorant Garamond",serif;
+    font-size:19px;
+}
+
+.mini-progress{
+    height:6px;
+    background:white;
+    border-radius:20px;
+    overflow:hidden;
+    margin-top:9px;
+}
+
+.mini-progress div{
+    height:100%;
+    background:var(--gold);
+}
+
+/* MAIN */
+
+.main{
+    margin-left:250px;
+    width:calc(100% - 250px);
+    min-height:100vh;
+    padding:35px;
+}
+
+.page{
+    display:none;
+    animation:fade .25s ease;
+}
+
+.page.active{
+    display:block;
+}
+
+@keyframes fade{
+    from{opacity:0;transform:translateY(5px)}
+    to{opacity:1;transform:translateY(0)}
+}
+
+.topbar{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    margin-bottom:28px;
+    gap:20px;
+}
+
+.eyebrow{
+    color:var(--gold);
+    letter-spacing:2px;
+    text-transform:uppercase;
+    font-size:11px;
+    font-weight:700;
+}
+
+.page-title{
+    font-family:"Cormorant Garamond",serif;
+    font-size:42px;
+    color:var(--blue-dark);
+    line-height:1;
+    margin-top:4px;
+}
+
+.subtitle{
+    color:#7b838a;
+    margin-top:7px;
+    font-size:14px;
+}
+
+.date-badge{
+    background:white;
+    border:1px solid var(--cream-dark);
+    padding:10px 15px;
+    border-radius:13px;
+    color:#777;
+    font-size:13px;
+}
+
+/* CARDS */
+
+.card{
+    background:rgba(255,253,249,.94);
+    border:1px solid var(--cream-dark);
+    border-radius:var(--radius);
+    box-shadow:var(--shadow);
+}
+
+.card-pad{
+    padding:22px;
+}
+
+.section-title{
+    font-family:"Cormorant Garamond",serif;
+    font-size:25px;
+    color:var(--blue-dark);
+    margin-bottom:14px;
+}
+
+.grid{
+    display:grid;
+    gap:18px;
+}
+
+.stats-grid{
+    grid-template-columns:repeat(4,1fr);
+}
+
+.stat-card{
+    padding:20px;
+}
+
+.stat-icon{
+    font-size:23px;
+}
+
+.stat-number{
+    font-family:"Cormorant Garamond",serif;
+    font-size:34px;
+    color:var(--blue-dark);
+    margin-top:6px;
+}
+
+.stat-label{
+    color:#818990;
+    font-size:12px;
+}
+
+/* HOME */
+
+.hero{
+    background:linear-gradient(135deg,#dce5ed,#f3e3e4);
+    padding:30px;
+    border-radius:24px;
+    position:relative;
+    overflow:hidden;
+    margin-bottom:20px;
+}
+
+.hero:after{
+    content:"❦";
+    position:absolute;
+    right:35px;
+    bottom:-20px;
+    font-family:"Cormorant Garamond",serif;
+    font-size:150px;
+    color:rgba(255,255,255,.4);
+}
+
+.hero h2{
+    font-family:"Cormorant Garamond",serif;
+    font-size:40px;
+    color:#40566b;
+    max-width:650px;
+}
+
+.hero p{
+    margin-top:8px;
+    max-width:600px;
+    color:#65717b;
+}
+
+.home-grid{
+    display:grid;
+    grid-template-columns:1.35fr .65fr;
+    gap:20px;
+    margin-top:20px;
+}
+
+.current-book{
+    display:flex;
+    gap:20px;
+    align-items:center;
+}
+
+.book-cover{
+    width:105px;
+    height:145px;
+    border-radius:10px;
+    background:linear-gradient(145deg,var(--blue-dark),var(--blue));
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    color:white;
+    padding:12px;
+    font-family:"Cormorant Garamond",serif;
+    font-size:19px;
+    box-shadow:0 7px 18px rgba(50,60,70,.18);
+    flex-shrink:0;
+}
+
+.book-cover.pink{
+    background:linear-gradient(145deg,#a87883,#e0bbc2);
+}
+
+.book-cover.sage{
+    background:linear-gradient(145deg,#75816d,#b4c0aa);
+}
+
+.book-cover.gold{
+    background:linear-gradient(145deg,#927848,#d0b982);
+}
+
+.book-info h3{
+    font-family:"Cormorant Garamond",serif;
+    color:var(--blue-dark);
+    font-size:27px;
+}
+
+.book-info p{
+    color:#818990;
+    font-size:13px;
+    margin:3px 0;
+}
+
+.progress{
+    height:9px;
+    background:#e8e6e0;
+    border-radius:30px;
+    overflow:hidden;
+    margin:14px 0 7px;
+}
+
+.progress div{
+    height:100%;
+    background:linear-gradient(90deg,var(--blue-dark),var(--gold));
+    border-radius:30px;
+    transition:.3s;
+}
+
+.progress-text{
+    font-size:12px;
+    color:#777;
+}
+
+.mission{
+    background:linear-gradient(145deg,#faf0f1,#fffaf4);
+}
+
+.mission-number{
+    font-family:"Cormorant Garamond",serif;
+    font-size:50px;
+    color:var(--pink);
+}
+
+/* BUTTONS */
+
+.btn{
+    border:0;
+    border-radius:12px;
+    padding:10px 15px;
+    background:var(--blue-dark);
+    color:white;
+    transition:.2s;
+}
+
+.btn:hover{
+    transform:translateY(-1px);
+    opacity:.9;
+}
+
+.btn.secondary{
+    background:var(--blue-light);
+    color:var(--blue-dark);
+}
+
+.btn.pink{
+    background:var(--pink);
+}
+
+.btn.gold{
+    background:var(--gold);
+}
+
+.btn.danger{
+    background:#bd7777;
+}
+
+.btn.small{
+    padding:7px 11px;
+    font-size:12px;
+}
+
+.actions{
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+}
+
+/* FORMS */
+
+.form-grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:15px;
+}
+
+.form-group{
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+}
+
+.form-group.full{
+    grid-column:1/-1;
+}
+
+.form-group label{
+    font-size:12px;
+    font-weight:700;
+    color:#69757f;
+}
+
+input,textarea,select{
+    width:100%;
+    border:1px solid #ddd7cc;
+    background:#fffdfa;
+    color:var(--text);
+    border-radius:11px;
+    padding:11px 12px;
+    outline:none;
+}
+
+input:focus,textarea:focus,select:focus{
+    border-color:var(--blue);
+    box-shadow:0 0 0 3px rgba(174,190,208,.2);
+}
+
+textarea{
+    min-height:130px;
+    resize:vertical;
+}
+
+/* LIBRARY */
+
+.library-toolbar{
+    display:flex;
+    gap:10px;
+    margin-bottom:18px;
+    flex-wrap:wrap;
+}
+
+.library-toolbar input{
+    flex:1;
+    min-width:200px;
+}
+
+.books-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:18px;
+}
+
+.book-card{
+    padding:18px;
+    position:relative;
+}
+
+.book-card-top{
+    display:flex;
+    gap:14px;
+}
+
+.book-card .book-cover{
+    width:75px;
+    height:105px;
+    font-size:15px;
+}
+
+.book-card h3{
+    font-family:"Cormorant Garamond",serif;
+    color:var(--blue-dark);
+    font-size:22px;
+}
+
+.book-card .author{
+    font-size:12px;
+    color:#888;
+}
+
+.status{
+    display:inline-block;
+    margin-top:7px;
+    padding:4px 8px;
+    border-radius:20px;
+    font-size:10px;
+    text-transform:uppercase;
+    letter-spacing:.6px;
+    font-weight:700;
+}
+
+.status.reading{
+    background:var(--blue-light);
+    color:var(--blue-dark);
+}
+
+.status.read{
+    background:#e4ebdf;
+    color:#66745e;
+}
+
+.status.want{
+    background:var(--pink-light);
+    color:#946c75;
+}
+
+.book-card .progress{
+    margin-top:15px;
+}
+
+.rating{
+    color:var(--gold);
+    letter-spacing:2px;
+    font-size:14px;
+}
+
+.card-footer{
+    margin-top:15px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:8px;
+}
+
+/* DETAILS */
+
+.detail-layout{
+    display:grid;
+    grid-template-columns:280px 1fr;
+    gap:22px;
+}
+
+.detail-cover{
+    width:100%;
+    height:390px;
+    font-size:28px;
+}
+
+.detail-main{
+    display:flex;
+    flex-direction:column;
+    gap:18px;
+}
+
+.detail-title{
+    font-family:"Cormorant Garamond",serif;
+    font-size:45px;
+    color:var(--blue-dark);
+}
+
+.meta-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:10px;
+}
+
+.meta{
+    background:#f7f2e9;
+    border-radius:12px;
+    padding:12px;
+}
+
+.meta small{
+    display:block;
+    color:#888;
+    font-size:10px;
+    text-transform:uppercase;
+    letter-spacing:1px;
+}
+
+.meta strong{
+    display:block;
+    margin-top:3px;
+}
+
+.reading-position{
+    background:var(--blue-light);
+    padding:18px;
+    border-radius:15px;
+}
+
+.page-input-row{
+    display:flex;
+    gap:10px;
+    align-items:center;
+    margin-top:10px;
+}
+
+.page-input-row input{
+    max-width:150px;
+}
+
+/* DIARY */
+
+.diary-layout{
+    display:grid;
+    grid-template-columns:350px 1fr;
+    gap:20px;
+}
+
+.diary-entry{
+    padding:16px;
+    border-bottom:1px solid var(--cream-dark);
+}
+
+.diary-entry:last-child{
+    border-bottom:0;
+}
+
+.diary-entry-head{
+    display:flex;
+    justify-content:space-between;
+    gap:10px;
+}
+
+.diary-entry h3{
+    font-family:"Cormorant Garamond",serif;
+    font-size:22px;
+    color:var(--blue-dark);
+}
+
+.entry-type{
+    color:var(--gold);
+    font-size:10px;
+    text-transform:uppercase;
+    letter-spacing:1px;
+}
+
+.diary-entry p{
+    color:#69737b;
+    font-size:13px;
+    line-height:1.6;
+    margin-top:7px;
+    white-space:pre-wrap;
+}
+
+/* TIMER */
+
+.timer-card{
+    max-width:650px;
+    margin:auto;
+    text-align:center;
+    padding:40px;
+}
+
+.timer-book{
+    color:#888;
+}
+
+.timer-display{
+    font-family:"Cormorant Garamond",serif;
+    font-size:90px;
+    color:var(--blue-dark);
+    line-height:1;
+    margin:25px 0;
+}
+
+.timer-options{
+    display:flex;
+    justify-content:center;
+    gap:8px;
+    flex-wrap:wrap;
+}
+
+.timer-options button.active{
+    background:var(--gold);
+    color:white;
+}
+
+/* GOALS */
+
+.goal-list{
+    display:grid;
+    gap:15px;
+}
+
+.goal{
+    padding:18px;
+}
+
+.goal-head{
+    display:flex;
+    justify-content:space-between;
+    margin-bottom:8px;
+}
+
+.goal-name{
+    font-family:"Cormorant Garamond",serif;
+    font-size:22px;
+    color:var(--blue-dark);
+}
+
+.goal-number{
+    color:#777;
+    font-size:13px;
+}
+
+/* CALENDAR */
+
+.calendar-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:15px;
+}
+
+.calendar-month{
+    font-family:"Cormorant Garamond",serif;
+    font-size:28px;
+    color:var(--blue-dark);
+}
+
+.calendar{
+    display:grid;
+    grid-template-columns:repeat(7,1fr);
+    gap:5px;
+}
+
+.calendar-day-name{
+    text-align:center;
+    color:#999;
+    font-size:11px;
+    padding:7px;
+}
+
+.calendar-day{
+    min-height:80px;
+    border:1px solid var(--cream-dark);
+    background:#fffdfa;
+    border-radius:9px;
+    padding:7px;
+    font-size:11px;
+}
+
+.calendar-day.today{
+    border:2px solid var(--gold);
+}
+
+.calendar-day.read-day{
+    background:#edf2ee;
+}
+
+.calendar-pages{
+    color:var(--blue-dark);
+    font-size:10px;
+    margin-top:6px;
+}
+
+/* BADGES */
+
+.badges-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:16px;
+}
+
+.badge{
+    text-align:center;
+    padding:22px 15px;
+}
+
+.badge-icon{
+    width:65px;
+    height:65px;
+    border-radius:50%;
+    background:var(--gold-light);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    margin:auto;
+    font-size:28px;
+}
+
+.badge.locked{
+    filter:grayscale(1);
+    opacity:.45;
+}
+
+.badge h3{
+    font-family:"Cormorant Garamond",serif;
+    font-size:21px;
+    color:var(--blue-dark);
+    margin-top:10px;
+}
+
+.badge p{
+    font-size:11px;
+    color:#888;
+    margin-top:4px;
+}
+
+/* STATS */
+
+.chart{
+    display:flex;
+    align-items:flex-end;
+    gap:10px;
+    height:230px;
+    padding:20px 10px 0;
+}
+
+.bar-wrap{
+    flex:1;
+    height:100%;
+    display:flex;
+    flex-direction:column;
+    justify-content:flex-end;
+    align-items:center;
+}
+
+.bar{
+    width:70%;
+    min-height:3px;
+    background:linear-gradient(to top,var(--blue-dark),var(--blue));
+    border-radius:8px 8px 0 0;
+}
+
+.bar-label{
+    margin-top:7px;
+    font-size:10px;
+    color:#888;
+}
+
+.bar-value{
+    font-size:10px;
+    color:#667;
+    margin-bottom:4px;
+}
+
+/* PROFILE */
+
+.profile{
+    max-width:700px;
+}
+
+.profile-symbol{
+    width:90px;
+    height:90px;
+    background:var(--pink-light);
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:42px;
+    margin-bottom:15px;
+}
+
+/* TOAST */
+
+.toast{
+    position:fixed;
+    right:25px;
+    bottom:25px;
+    background:var(--blue-dark);
+    color:white;
+    padding:13px 18px;
+    border-radius:12px;
+    box-shadow:var(--shadow);
+    transform:translateY(100px);
+    opacity:0;
+    transition:.3s;
+    z-index:100;
+    font-size:13px;
+}
+
+.toast.show{
+    transform:translateY(0);
+    opacity:1;
+}
+
+/* MOBILE */
+
+.mobile-menu{
+    display:none;
+}
+
+@media(max-width:1050px){
+    .stats-grid{grid-template-columns:repeat(2,1fr)}
+    .books-grid{grid-template-columns:repeat(2,1fr)}
+    .badges-grid{grid-template-columns:repeat(3,1fr)}
+    .home-grid,.diary-layout{grid-template-columns:1fr}
+}
+
+@media(max-width:800px){
+    .sidebar{
+        transform:translateX(-100%);
+        transition:.25s;
+    }
+
+    .sidebar.open{
+        transform:translateX(0);
+    }
+
+    .main{
+        margin-left:0;
+        width:100%;
+        padding:20px;
+    }
+
+    .mobile-menu{
+        display:block;
+        border:0;
+        background:var(--blue-dark);
+        color:white;
+        border-radius:10px;
+        padding:9px 12px;
+        margin-bottom:15px;
+    }
+
+    .detail-layout{
+        grid-template-columns:1fr;
+    }
+
+    .detail-cover{
+        max-width:250px;
+        margin:auto;
+    }
+
+    .books-grid{
+        grid-template-columns:1fr;
+    }
+
+    .badges-grid{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .form-grid{
+        grid-template-columns:1fr;
+    }
+
+    .form-group.full{
+        grid-column:auto;
+    }
+
+    .meta-grid{
+        grid-template-columns:1fr 1fr;
+    }
+}
+
+@media(max-width:500px){
+    .stats-grid{
+        grid-template-columns:1fr 1fr;
+    }
+
+    .page-title{
+        font-size:34px;
+    }
+
+    .hero h2{
+        font-size:31px;
+    }
+
+    .timer-display{
+        font-size:65px;
+    }
+
+    .calendar-day{
+        min-height:60px;
+    }
+
+    .calendar-day-name{
+        font-size:9px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+<aside class="sidebar" id="sidebar">
+
+    <div class="logo">
+        <div class="logo-small">The</div>
+        <h1>Reading Society</h1>
+        <p>A most distinguished library</p>
+    </div>
+
+    <nav class="nav">
+        <button class="active" onclick="showPage('home',this)">🏠 <span>Home</span></button>
+        <button onclick="showPage('library',this)">📚 <span>Mijn boeken</span></button>
+        <button onclick="showPage('diary',this)">✒️ <span>Leesdagboek</span></button>
+        <button onclick="showPage('reading',this)">⏳ <span>Lezen</span></button>
+        <button onclick="showPage('goals',this)">🎯 <span>Doelen</span></button>
+        <button onclick="showPage('calendar',this)">🗓️ <span>Leeskalender</span></button>
+        <button onclick="showPage('badges',this)">🏅 <span>Badges</span></button>
+        <button onclick="showPage('stats',this)">📊 <span>Statistieken</span></button>
+        <button onclick="showPage('profile',this)">👤 <span>Profiel</span></button>
+    </nav>
+
+    <div class="sidebar-bottom">
+        <div class="level-mini">
+            <div class="logo-small">Your Society Rank</div>
+            <strong id="sideLevel">Debutante Reader</strong>
+            <div class="mini-progress">
+                <div id="sideXPBar" style="width:0%"></div>
+            </div>
+            <small id="sideXPText">0 XP</small>
+        </div>
+    </div>
+
+</aside>
+
+<main class="main">
+
+<button class="mobile-menu" onclick="toggleSidebar()">☰ Menu</button>
+
+<!-- HOME -->
+
+<section id="page-home" class="page active">
+
+    <div class="topbar">
+        <div>
+            <div class="eyebrow">Welcome to the Society</div>
+            <h1 class="page-title">Goedendag, lezeres ♡</h1>
+            <p class="subtitle">Een kleine plek voor grote verhalen.</p>
+        </div>
+        <div class="date-badge" id="todayDate"></div>
+    </div>
+
+    <div class="hero">
+        <div class="eyebrow">The Society Gazette</div>
+        <h2>Een boek per hoofdstuk.<br>Een verhaal per dag.</h2>
+        <p>Houd je boeken bij, schrijf je gedachten op en ontdek hoeveel pagina's je werkelijk leest.</p>
+    </div>
+
+    <div class="grid stats-grid">
+        <div class="card stat-card">
+            <div class="stat-icon">📚</div>
+            <div class="stat-number" id="homeBooks">0</div>
+            <div class="stat-label">Boeken in je bibliotheek</div>
+        </div>
+
+        <div class="card stat-card">
+            <div class="stat-icon">📖</div>
+            <div class="stat-number" id="homePages">0</div>
+            <div class="stat-label">Pagina's gelezen</div>
+        </div>
+
+        <div class="card stat-card">
+            <div class="stat-icon">🔥</div>
+            <div class="stat-number" id="homeStreak">0</div>
+            <div class="stat-label">Dagen leesreeks</div>
+        </div>
+
+        <div class="card stat-card">
+            <div class="stat-icon">⭐</div>
+            <div class="stat-number" id="homeXP">0</div>
+            <div class="stat-label">Society XP</div>
+        </div>
+    </div>
+
+    <div class="home-grid">
+
+        <div class="card card-pad">
+            <div class="section-title">Je huidige boek</div>
+            <div id="homeCurrentBook"></div>
+        </div>
+
+        <div class="card card-pad mission">
+            <div class="section-title">Today's Reading Mission</div>
+            <div class="mission-number" id="missionNumber">10</div>
+            <p>pagina's vandaag</p>
+            <div class="progress">
+                <div id="missionProgress" style="width:0%"></div>
+            </div>
+            <small id="missionText">Nog 10 pagina's te gaan.</small>
+        </div>
+
+    </div>
+
+</section>
+
+<!-- LIBRARY -->
+
+<section id="page-library" class="page">
+
+    <div class="topbar">
+        <div>
+            <div class="eyebrow">Your personal library</div>
+            <h1 class="page-title">Mijn boeken</h1>
+            <p class="subtitle">Iedereen heeft een boek dat op hen wacht.</p>
+        </div>
+
+        <button class="btn pink" onclick="showAddBook()">＋ Boek toevoegen</button>
+    </div>
+
+    <div id="addBookCard" class="card card-pad" style="display:none;margin-bottom:20px">
+
+        <div class="section-title">Een nieuw boek opnemen in de Society</div>
+
+        <form onsubmit="addBook(event)">
+
+            <div class="form-grid">
+
+                <div class="form-group">
+                    <label>Titel *</label>
+                    <input id="bookTitle" required placeholder="Bijv. Pride and Prejudice">
+                </div>
+
+                <div class="form-group">
+                    <label>Auteur *</label>
+                    <input id="bookAuthor" required placeholder="Bijv. Jane Austen">
+                </div>
+
+                <div class="form-group">
+                    <label>Aantal pagina's *</label>
+                    <input id="bookPages" type="number" min="1" required placeholder="350">
+                </div>
+
+                <div class="form-group">
+                    <label>Genre</label>
+                    <input id="bookGenre" placeholder="Romance, fantasy, thriller...">
+                </div>
+
+                <div class="form-group">
+                    <label>Status</label>
+                    <select id="bookStatus">
+                        <option value="want">Wil ik lezen</option>
+                        <option value="reading">Aan het lezen</option>
+                        <option value="read">Gelezen</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Uitgever</label>
+                    <input id="bookPublisher" placeholder="Uitgeverij">
+                </div>
+
+                <div class="form-group">
+                    <label>Jaar van uitgave</label>
+                    <input id="bookYear" type="number" placeholder="2025">
+                </div>
+
+                <div class="form-group">
+                    <label>ISBN</label>
+                    <input id="bookISBN" placeholder="Optioneel">
+                </div>
+
+                <div class="form-group full">
+                    <label>Beschrijving</label>
+                    <textarea id="bookDescription" placeholder="Waar gaat je boek over?"></textarea>
+                </div>
+
+            </div>
+
+            <div class="actions" style="margin-top:15px">
+                <button class="btn" type="submit">Boek toevoegen</button>
+                <button class="btn secondary" type="button" onclick="hideAddBook()">Annuleren</button>
+            </div>
+
+        </form>
+
+    </div>
+
+    <div class="library-toolbar">
+        <input id="searchBooks" placeholder="🔎 Zoek op titel of auteur..." oninput="renderLibrary()">
+
+        <select id="filterStatus" onchange="renderLibrary()">
+            <option value="all">Alle boeken</option>
+            <option value="reading">Aan het lezen</option>
+            <option value="read">Gelezen</option>
+            <option value="want">Wil ik lezen</option>
+        </select>
+
+        <select id="sortBooks" onchange="renderLibrary()">
+            <option value="title">Titel</option>
+            <option value="author">Auteur</option>
+            <option value="progress">Voortgang</option>
+            <option value="rating">Beoordeling</option>
+        </select>
+    </div>
+
+    <div id="booksGrid" class="books-grid"></div>
+
+</section>
+
+<!-- BOOK DETAILS -->
+
+<section id="page-details" class="page">
+
+    <div class="topbar">
+        <div>
+            <div class="eyebrow">A closer look</div>
+            <h1 class="page-title">Boekdetails</h1>
+        </div>
+
+        <button class="btn secondary" onclick="showPage('library')">← Terug naar boeken</button>
+    </div>
+
+    <div id="detailsContent"></div>
+
+</section>
+
+<!-- DIARY -->
+
+<section id="page-diary" class="page">
+
+    <div class="topbar">
+        <div>
+            <div class="eyebrow">Private correspondence</div>
+            <h1 class="page-title">Leesdagboek</h1>
+            <p class="subtitle">Schrijf op wat je dacht, voelde en vond van je verhalen.</p>
+        </div>
+    </div>
+
+    <div class="diary-layout">
+
+        <div class="card card-pad">
+
+            <div class="section-title">Nieuwe notitie</div>
+
+            <form onsubmit="addDiaryEntry(event)">
+
+                <div class="form-group">
+                    <label>Boek</label>
+                    <select id="diaryBook"></select>
+                </div>
+
+                <div class="form-group" style="margin-top:12px">
+                    <label>Type</label>
+                    <select id="diaryType">
+                        <option value="Notitie">Notitie</option>
+                        <option value="Review">Review</option>
+                        <option value="Gedachte">Gedachte tijdens het lezen</option>
+                    </select>
+                </div>
+
+                <div class="form-group" style="margin-top:12px">
+                    <label>Je tekst</label>
+                    <textarea id="diaryText" required placeholder="Schrijf hier je gedachten..."></textarea>
+                </div>
+
+                <button class="btn" style="margin-top:12px" type="submit">✒️ Opslaan</button>
+
+            </form>
+
+        </div>
+
+        <div class="card card-pad">
+
+            <div class="section-title">Mijn schrijfsels</div>
+
+            <div id="diaryEntries"></div>
+
+        </div>
+
+    </div>
+
+</section>
+
+<!-- READING TIMER -->
+
+<section id="page-reading" class="page">
+
+    <div class="topbar">
+        <div>
+            <div class="eyebrow">A quiet moment</div>
+            <h1 class="page-title">Leestimer</h1>
+            <p class="subtitle">Leg je telefoon weg. Open je boek. Begin.</p>
+        </div>
+    </div>
+
+    <div class="card timer-card">
+
+        <div class="timer-book" id="timerBookName">Kies eerst een boek</div>
+
+        <select id="timerBook" onchange="updateTimerBook()" style="max-width:300px;margin-top:10px"></select>
+
+        <div class="timer-display" id="timerDisplay">25:00</div>
+
+        <div class="timer-options">
+            <button class="btn secondary timer-choice active" onclick="setTimer(25,this)">25 min</button>
+            <button class="btn secondary timer-choice" onclick="setTimer(15,this)">15 min</button>
+            <button class="btn secondary timer-choice" onclick="setTimer(45,this)">45 min</button>
+            <button class="btn secondary timer-choice" onclick="setTimer(60,this)">60 min</button>
+        </div>
+
+        <div class="actions" style="justify-content:center;margin-top:20px">
+            <button class="btn" id="timerStart" onclick="toggleTimer()">▶ Start</button>
+            <button class="btn secondary" onclick="resetTimer()">↻ Reset</button>
+        </div>
+
+        <p style="margin-top:18px;color:#888;font-size:12px">
+            Na afloop wordt je leestijd automatisch toegevoegd aan je statistieken.
+        </p>
+
+    </div>
+
+</section>
+
+<!-- GOALS -->
+
+<section id="page-goals" class="page">
+
+    <div class="topbar">
+        <div>
+            <div class="eyebrow">Your reading ambitions</div>
+            <h1 class="page-title">Mijn doelen</h1>
+            <p class="subtitle">Een society member met een doel is een gevaarlijke tegenstander.</p>
+        </div>
+    </div>
+
+    <div class="card card-pad" style="margin-bottom:20px">
+
+        <div class="section-title">Doelen instellen</div>
+
+        <div class="form-grid">
+
+            <div class="form-group">
+                <label>Boeken dit jaar</label>
+                <input id="goalYearBooks" type="number" min="1">
+            </div>
+
+            <div class="form-group">
+                <label>Boeken deze maand</label>
+                <input id="goalMonthBooks" type="number" min="1">
+            </div>
+
+            <div class="form-group">
+                <label>Minuten per dag</label>
+                <input id="goalDailyMinutes" type="number" min="1">
+            </div>
+
+            <div class="form-group">
+                <label>Pagina's per week</label>
+                <input id="goalWeeklyPages" type="number" min="1">
+            </div>
+
+        </div>
+
+        <button class="btn" onclick="saveGoals()" style="margin-top:15px">Doelen opslaan</button>
+
+    </div>
+
+    <div id="goalsList" class="goal-list"></div>
+
+</section>
+
+<!-- CALENDAR -->
+
+<section id="page-calendar" class="page">
+
+    <div class="topbar">
+        <div>
+            <div class="eyebrow">A record of your reading</div>
+            <h1 class="page-title">Leeskalender</h1>
+            <p class="subtitle">Elke dag waarop je las, is een klein hoofdstuk in je verhaal.</p>
+        </div>
+    </div>
+
+    <div class="card card-pad">
+
+        <div class="calendar-header">
+
+            <button class="btn secondary small" onclick="changeMonth(-1)">←</button>
+
+            <div class="calendar-month" id="calendarMonth"></div>
+
+            <button class="btn secondary small" onclick="changeMonth(1)">→</button>
+
+        </div>
+
+        <div id="calendar" class="calendar"></div>
+
+    </div>
+
+</section>
+
+<!-- BADGES -->
+
+<section id="page-badges" class="page">
+
+    <div class="topbar">
+        <div>
+            <div class="eyebrow">Honours of the Society</div>
+            <h1 class="page-title">Badges</h1>
+            <p class="subtitle">Verdien je plaats tussen de meest toegewijde lezers.</p>
+        </div>
+    </div>
+
+    <div id="badgesGrid" class="badges-grid"></div>
+
+</section>
+
+<!-- STATS -->
+
+<section id="page-stats" class="page">
+
+    <div class="topbar">
+        <div>
+            <div class="eyebrow">The annual report</div>
+            <h1 class="page-title">Statistieken</h1>
+            <p class="subtitle">Een overzicht van je literaire avonturen.</p>
+        </div>
+    </div>
+
+    <div class="grid stats-grid">
+
+        <div class="card stat-card">
+            <div class="stat-number" id="statTotalBooks">0</div>
+            <div class="stat-label">Boeken</div>
+        </div>
+
+        <div class="card stat-card">
+            <div class="stat-number" id="statReadBooks">0</div>
+            <div class="stat-label">Gelezen</div>
+        </div>
+
+        <div class="card stat-card">
+            <div class="stat-number" id="statPages">0</div>
+            <div class="stat-label">Pagina's</div>
+        </div>
+
+        <div class="card stat-card">
+            <div class="stat-number" id="statMinutes">0</div>
+            <div class="stat-label">Leesminuten</div>
+        </div>
+
+    </div>
+
+    <div class="card card-pad" style="margin-top:20px">
+
+        <div class="section-title">Je laatste 7 leesdagen</div>
+
+        <div id="statsChart" class="chart"></div>
+
+    </div>
+
+    <div class="grid" style="grid-template-columns:1fr 1fr;margin-top:20px">
+
+        <div class="card card-pad">
+            <div class="section-title">Gemiddelde beoordeling</div>
+            <div class="stat-number" id="averageRating">—</div>
+            <div id="averageStars" class="rating"></div>
+        </div>
+
+        <div class="card card-pad">
+            <div class="section-title">Favoriete genre</div>
+            <div class="stat-number" id="favoriteGenre">—</div>
+        </div>
+
+    </div>
+
+</section>
+
+<!-- PROFILE -->
+
+<section id="page-profile" class="page">
+
+    <div class="topbar">
+        <div>
+            <div class="eyebrow">Your Society profile</div>
+            <h1 class="page-title">Profiel</h1>
+        </div>
+    </div>
+
+    <div class="card card-pad profile">
+
+        <div class="profile-symbol">📖</div>
+
+        <div class="section-title">Mijn leesprofiel</div>
+
+        <div class="form-group">
+            <label>Naam</label>
+            <input id="profileName" placeholder="Jouw naam">
+        </div>
+
+        <div class="form-group" style="margin-top:14px">
+            <label>Mijn favoriete genre</label>
+            <input id="profileGenre" placeholder="Bijv. romance">
+        </div>
+
+        <button class="btn" onclick="saveProfile()" style="margin-top:15px">Profiel opslaan</button>
+
+        <hr style="margin:25px 0;border:0;border-top:1px solid var(--cream-dark)">
+
+        <div class="section-title">Society Rank</div>
+
+        <h2 id="profileLevel" style="font-family:'Cormorant Garamond';font-size:30px;color:var(--blue-dark)"></h2>
+
+        <p id="profileXP" style="color:#888;margin-top:4px"></p>
+
+        <div class="progress">
+            <div id="profileXPBar"></div>
+        </div>
+
+        <div style="margin-top:20px">
+            <button class="btn danger" onclick="resetData()">Alle gegevens wissen</button>
+        </div>
+
+    </div>
+
+</section>
+
+</main>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+
+/* =========================================================
+   THE READING SOCIETY — VERSION 3.0
+   ========================================================= */
+
+const STORAGE_KEY = "readingSociety3";
+const OLD_KEY = "readingSociety2";
+
+const levels = [
+    {name:"Debutante Reader",min:0},
+    {name:"Seasoned Reader",min:100},
+    {name:"Distinguished Reader",min:300},
+    {name:"Society Favourite",min:700},
+    {name:"Lady of Literature",min:1200},
+    {name:"Diamond of the Season",min:2000}
+];
+
+const badgeDefinitions = [
+    {id:"first",icon:"📖",name:"First Chapter",desc:"Voeg je eerste boek toe.",check:d=>d.books.length>=1},
+    {id:"reading",icon:"🔥",name:"On a Roll",desc:"Lees 3 dagen achter elkaar.",check:d=>getStreak(d)>=3},
+    {id:"books5",icon:"📚",name:"Little Library",desc:"Heb 5 boeken in je bibliotheek.",check:d=>d.books.length>=5},
+    {id:"pages500",icon:"✨",name:"Page Turner",desc:"Lees 500 pagina's.",check:d=>getTotalPagesRead(d)>=500},
+    {id:"pages1000",icon:"👑",name:"Dedicated Reader",desc:"Lees 1.000 pagina's.",check:d=>getTotalPagesRead(d)>=1000},
+    {id:"diary5",icon:"✒️",name:"Chronicler",desc:"Schrijf 5 dagboeknotities.",check:d=>d.diaryEntries.length>=5},
+    {id:"rating5",icon:"⭐",name:"Five Star Society",desc:"Geef een boek 5 sterren.",check:d=>d.books.some(b=>b.rating===5)},
+    {id:"bookread",icon:"🎓",name:"Book of the Ton",desc:"Rond je eerste boek af.",check:d=>d.books.some(b=>b.status==="read")},
+    {id:"minutes300",icon:"⏳",name:"Quiet Reader",desc:"Lees 300 minuten.",check:d=>getTotalMinutes(d)>=300},
+    {id:"tenbooks",icon:"💎",name:"Diamond Reader",desc:"Lees 10 boeken.",check:d=>d.books.filter(b=>b.status==="read").length>=10}
+];
+
+function defaultData(){
+    return {
+        books:[],
+        diaryEntries:[],
+        readingHistory:{},
+        xp:0,
+        goals:{
+            yearBooks:20,
+            monthBooks:2,
+            dailyMinutes:20,
+            weeklyPages:100
+        },
+        profile:{
+            name:"",
+            genre:""
+        },
+        missionDate:"",
+        missionPages:10,
+        timerMinutes:25
+    };
+}
+
+function loadData(){
+
+    let saved = localStorage.getItem(STORAGE_KEY);
+
+    if(saved){
+        try{
+            return normalizeData(JSON.parse(saved));
+        }catch(e){}
+    }
+
+    /*
+      Small migration from version 2 so existing books
+      are not immediately lost.
+    */
+
+    let old = localStorage.getItem(OLD_KEY);
+
+    if(old){
+        try{
+            const oldData = JSON.parse(old);
+            const fresh = defaultData();
+
+            if(Array.isArray(oldData.books)){
+                fresh.books = oldData.books.map(b=>normalizeBook(b));
+            }
+
+            fresh.xp = Number(oldData.xp)||0;
+
+            return fresh;
+        }catch(e){}
+    }
+
+    return defaultData();
+}
+
+function normalizeData(d){
+
+    const fresh = defaultData();
+
+    return {
+        ...fresh,
+        ...d,
+        books:Array.isArray(d.books) ? d.books.map(normalizeBook) : [],
+        diaryEntries:Array.isArray(d.diaryEntries) ? d.diaryEntries : [],
+        readingHistory:d.readingHistory || {},
+        goals:{...fresh.goals,...(d.goals||{})},
+        profile:{...fresh.profile,...(d.profile||{})}
+    };
+}
+
+function normalizeBook(b){
+
+    const pages = Math.max(1,Number(b.pages)||1);
+    let current = Number(b.currentPage)||0;
+
+    if(b.status==="read") current=pages;
+
+    current=Math.min(pages,Math.max(0,current));
+
+    return {
+        id:b.id || Date.now()+Math.random(),
+        title:b.title || "Onbekend boek",
+        author:b.author || "Onbekende auteur",
+        pages,
+        currentPage:current,
+        genre:b.genre || "",
+        status:b.status || "want",
+        publisher:b.publisher || "",
+        year:b.year || "",
+        isbn:b.isbn || "",
+        description:b.description || "",
+        rating:Number(b.rating)||0,
+        review:b.review || "",
+        notes:b.notes || "",
+        thoughts:b.thoughts || "",
+        favoriteQuote:b.favoriteQuote || "",
+        createdAt:b.createdAt || new Date().toISOString(),
+        completedXP:b.completedXP || false
+    };
+}
+
+let data = loadData();
+
+function saveData(){
+    localStorage.setItem(STORAGE_KEY,JSON.stringify(data));
+    refreshAll();
+}
+
+function showToast(message){
+
+    const toast=document.getElementById("toast");
+
+    toast.textContent=message;
+    toast.classList.add("show");
+
+    clearTimeout(window.toastTimeout);
+
+    window.toastTimeout=setTimeout(()=>{
+        toast.classList.remove("show");
+    },2500);
+}
+
+/* NAVIGATION */
+
+function showPage(name,button){
+
+    document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+
+    const page=document.getElementById("page-"+name);
+
+    if(page) page.classList.add("active");
+
+    document.querySelectorAll(".nav button").forEach(b=>b.classList.remove("active"));
+
+    if(button) button.classList.add("active");
+
+    document.getElementById("sidebar").classList.remove("open");
+
+    if(name==="details") renderDetails(currentBookId);
+
+    refreshAll();
+}
+
+function toggleSidebar(){
+    document.getElementById("sidebar").classList.toggle("open");
+}
+
+/* DATE */
+
+function localDateKey(date=new Date()){
+
+    const y=date.getFullYear();
+    const m=String(date.getMonth()+1).padStart(2,"0");
+    const d=String(date.getDate()).padStart(2,"0");
+
+    return `${y}-${m}-${d}`;
+}
+
+function formatDate(dateString){
+
+    const d=new Date(dateString);
+
+    return d.toLocaleDateString("nl-NL",{
+        day:"numeric",
+        month:"long",
+        year:"numeric"
+    });
+}
+
+/* XP */
+
+function getLevel(){
+
+    let result=levels[0];
+
+    for(const level of levels){
+        if(data.xp>=level.min) result=level;
+    }
+
+    return result;
+}
+
+function getNextLevel(){
+
+    const index=levels.findIndex(l=>l.name===getLevel().name);
+
+    return levels[index+1] || null;
+}
+
+function getLevelProgress(){
+
+    const current=getLevel();
+    const next=getNextLevel();
+
+    if(!next) return 100;
+
+    return Math.min(
+        100,
+        Math.round(
+            ((data.xp-current.min)/(next.min-current.min))*100
+        )
+    );
+}
+
+function addXP(amount,reason){
+
+    data.xp += amount;
+
+    showToast(`+${amount} XP — ${reason}`);
+
+    saveData();
+}
+
+/* BOOKS */
+
+let currentBookId=null;
+
+function showAddBook(){
+
+    document.getElementById("addBookCard").style.display="block";
+
+    document.getElementById("bookTitle").focus();
+}
+
+function hideAddBook(){
+    document.getElementById("addBookCard").style.display="none";
+}
+
+function addBook(event){
+
+    event.preventDefault();
+
+    const book={
+        id:Date.now(),
+        title:document.getElementById("bookTitle").value.trim(),
+        author:document.getElementById("bookAuthor").value.trim(),
+        pages:Number(document.getElementById("bookPages").value),
+        currentPage:0,
+        genre:document.getElementById("bookGenre").value.trim(),
+        status:document.getElementById("bookStatus").value,
+        publisher:document.getElementById("bookPublisher").value.trim(),
+        year:document.getElementById("bookYear").value,
+        isbn:document.getElementById("bookISBN").value.trim(),
+        description:document.getElementById("bookDescription").value.trim(),
+        rating:0,
+        review:"",
+        notes:"",
+        thoughts:"",
+        favoriteQuote:"",
+        createdAt:new Date().toISOString(),
+        completedXP:false
+    };
+
+    if(book.status==="read"){
+        book.currentPage=book.pages;
+    }
+
+    data.books.push(book);
+
+    data.xp+=20;
+
+    event.target.reset();
+
+    hideAddBook();
+
+    showToast("Boek toegevoegd aan de Society. +20 XP");
+
+    saveData();
+}
+
+function getProgress(book){
+
+    if(book.pages<=0) return 0;
+
+    return Math.min(
+        100,
+        Math.round((book.currentPage/book.pages)*100)
+    );
+}
+
+function getStatusLabel(status){
+
+    return {
+        reading:"Aan het lezen",
+        read:"Gelezen",
+        want:"Wil ik lezen"
+    }[status] || status;
+}
+
+function coverClass(book){
+
+    const classes=["","pink","sage","gold"];
+
+    return classes[Math.abs(String(book.id).split("").reduce((a,c)=>a+c.charCodeAt(0),0))%classes.length];
+}
+
+function renderLibrary(){
+
+    const grid=document.getElementById("booksGrid");
+
+    if(!grid) return;
+
+    const search=(document.getElementById("searchBooks")?.value || "").toLowerCase();
+    const filter=document.getElementById("filterStatus")?.value || "all";
+    const sort=document.getElementById("sortBooks")?.value || "title";
+
+    let books=data.books.filter(book=>{
+
+        const matchesSearch =
+            book.title.toLowerCase().includes(search) ||
+            book.author.toLowerCase().includes(search);
+
+        const matchesFilter =
+            filter==="all" || book.status===filter;
+
+        return matchesSearch && matchesFilter;
+    });
+
+    books.sort((a,b)=>{
+
+        if(sort==="author")
+            return a.author.localeCompare(b.author);
+
+        if(sort==="progress")
+            return getProgress(b)-getProgress(a);
+
+        if(sort==="rating")
+            return b.rating-a.rating;
+
+        return a.title.localeCompare(b.title);
+    });
+
+    if(books.length===0){
+
+        grid.innerHTML=`
+            <div class="card card-pad" style="grid-column:1/-1;text-align:center">
+                <div style="font-size:45px">📚</div>
+                <h2 class="section-title">Je bibliotheek is nog stil...</h2>
+                <p style="color:#888">Voeg je eerste boek toe en begin je Society.</p>
+            </div>
+        `;
+
+        return;
+    }
+
+    grid.innerHTML=books.map(book=>{
+
+        const progress=getProgress(book);
+
+        return `
+        <div class="card book-card">
+
+            <div class="book-card-top">
+
+                <div class="book-cover ${coverClass(book)}">
+                    ${escapeHTML(book.title)}
+                </div>
+
+                <div>
+                    <h3>${escapeHTML(book.title)}</h3>
+                    <div class="author">${escapeHTML(book.author)}</div>
+
+                    <span class="status ${book.status}">
+                        ${getStatusLabel(book.status)}
+                    </span>
+
+                    <div class="rating" style="margin-top:7px">
+                        ${stars(book.rating)}
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="progress">
+                <div style="width:${progress}%"></div>
+            </div>
+
+            <div class="progress-text">
+                Pagina ${book.currentPage} van ${book.pages} · ${progress}%
+            </div>
+
+            <div class="card-footer">
+
+                <button class="btn secondary small" onclick="openBook(${book.id})">
+                    Details
+                </button>
+
+                <button class="btn small" onclick="quickPage(${book.id})">
+                    +10 pagina's
+                </button>
+
+            </div>
+
+        </div>
+        `;
+    }).join("");
+}
+
+function quickPage(id){
+
+    const book=data.books.find(b=>b.id===id);
+
+    if(!book) return;
+
+    const oldPage=book.currentPage;
+
+    book.currentPage=Math.min(book.pages,book.currentPage+10);
+
+    if(book.currentPage>oldPage){
+        recordReading(book.currentPage-oldPage,0);
+        data.xp += (book.currentPage-oldPage);
+    }
+
+    if(book.currentPage>=book.pages){
+        completeBook(book);
+    }else if(book.currentPage>0 && book.status==="want"){
+        book.status="reading";
+    }
+
+    saveData();
+
+    showToast(
+        book.currentPage>=book.pages
+        ? "Boek afgerond! 🎓"
+        : "Pagina's bijgewerkt."
+    );
+}
+
+function completeBook(book){
+
+    book.currentPage=book.pages;
+    book.status="read";
+
+    if(!book.completedXP){
+        data.xp+=100;
+        book.completedXP=true;
+    }
+}
+
+/* DETAILS */
+
+function openBook(id){
+
+    currentBookId=id;
+
+    document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+
+    document.getElementById("page-details").classList.add("active");
+
+    document.querySelectorAll(".nav button").forEach(b=>b.classList.remove("active"));
+
+    renderDetails(id);
+}
+
+function renderDetails(id){
+
+    const container=document.getElementById("detailsContent");
+
+    if(!container) return;
+
+    const book=data.books.find(b=>b.id===id);
+
+    if(!book){
+        container.innerHTML="<p>Boek niet gevonden.</p>";
+        return;
+    }
+
+    const progress=getProgress(book);
+
+    container.innerHTML=`
+
+    <div class="detail-layout">
+
+        <div>
+            <div class="book-cover detail-cover ${coverClass(book)}">
+                ${escapeHTML(book.title)}
+            </div>
+
+            <div style="margin-top:12px;text-align:center">
+                <div class="rating" style="font-size:20px">
+                    ${stars(book.rating)}
+                </div>
+            </div>
+        </div>
+
+        <div class="detail-main">
+
+            <div>
+                <div class="eyebrow">${escapeHTML(book.genre || "Book of the Society")}</div>
+
+                <h2 class="detail-title">${escapeHTML(book.title)}</h2>
+
+                <p style="color:#888">
+                    door ${escapeHTML(book.author)}
+                </p>
+            </div>
+
+            <div class="meta-grid">
+
+                <div class="meta">
+                    <small>Pagina's</small>
+                    <strong>${book.pages}</strong>
+                </div>
+
+                <div class="meta">
+                    <small>Uitgever</small>
+                    <strong>${escapeHTML(book.publisher || "—")}</strong>
+                </div>
+
+                <div class="meta">
+                    <small>Uitgave</small>
+                    <strong>${escapeHTML(String(book.year || "—"))}</strong>
+                </div>
+
+                <div class="meta">
+                    <small>ISBN</small>
+                    <strong>${escapeHTML(book.isbn || "—")}</strong>
+                </div>
+
+                <div class="meta">
+                    <small>Status</small>
+                    <strong>${getStatusLabel(book.status)}</strong>
+                </div>
+
+                <div class="meta">
+                    <small>Voortgang</small>
+                    <strong>${progress}%</strong>
+                </div>
+
+            </div>
+
+            <div class="reading-position">
+
+                <strong>📖 Waar ben je gebleven?</strong>
+
+                <div class="page-input-row">
+
+                    <input
+                        id="currentPageInput"
+                        type="number"
+                        min="0"
+                        max="${book.pages}"
+                        value="${book.currentPage}"
+                    >
+
+                    <span>van ${book.pages} pagina's</span>
+
+                    <button class="btn small" onclick="saveCurrentPage(${book.id})">
+                        Opslaan
+                    </button>
+
+                </div>
+
+                <div class="progress">
+                    <div style="width:${progress}%"></div>
+                </div>
+
+            </div>
+
+            <div class="card card-pad">
+
+                <div class="section-title">Over dit boek</div>
+
+                <p style="line-height:1.7;color:#69737b">
+                    ${escapeHTML(book.description || "Je hebt nog geen beschrijving toegevoegd.")}
+                </p>
+
+            </div>
+
+            <div class="card card-pad">
+
+                <div class="section-title">Mijn beoordeling</div>
+
+                <div class="form-group">
+                    <label>Sterren</label>
+                    <select id="detailRating">
+                        <option value="0" ${book.rating===0?"selected":""}>Nog niet beoordeeld</option>
+                        <option value="1" ${book.rating===1?"selected":""}>★ 1 ster</option>
+                        <option value="2" ${book.rating===2?"selected":""}>★★ 2 sterren</option>
+                        <option value="3" ${book.rating===3?"selected":""}>★★★ 3 sterren</option>
+                        <option value="4" ${book.rating===4?"selected":""}>★★★★ 4 sterren</option>
+                        <option value="5" ${book.rating===5?"selected":""}>★★★★★ 5 sterren</option>
+                    </select>
+                </div>
+
+                <div class="form-group" style="margin-top:14px">
+                    <label>Mijn review</label>
+                    <textarea id="detailReview" placeholder="Wat vond je van dit boek?">${escapeHTML(book.review)}</textarea>
+                </div>
+
+                <div class="form-group" style="margin-top:14px">
+                    <label>Mijn notities</label>
+                    <textarea id="detailNotes" placeholder="Belangrijke gedachten, personages, gebeurtenissen...">${escapeHTML(book.notes)}</textarea>
+                </div>
+
+                <div class="form-group" style="margin-top:14px">
+                    <label>Gedachten tijdens het lezen</label>
+                    <textarea id="detailThoughts" placeholder="Wat dacht je terwijl je aan het lezen was?">${escapeHTML(book.thoughts)}</textarea>
+                </div>
+
+                <div class="form-group" style="margin-top:14px">
+                    <label>Favoriete quote / passage</label>
+                    <textarea id="detailQuote" placeholder="Schrijf hier je eigen korte notitie of quote...">${escapeHTML(book.favoriteQuote)}</textarea>
+                </div>
+
+                <div class="actions" style="margin-top:15px">
+
+                    <button class="btn" onclick="saveBookDetails(${book.id})">
+                        💌 Details opslaan
+                    </button>
+
+                    <button class="btn danger" onclick="deleteBook(${book.id})">
+                        Verwijderen
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+    `;
+}
+
+function saveCurrentPage(id){
+
+    const book=data.books.find(b=>b.id===id);
+
+    if(!book) return;
+
+    const input=document.getElementById("currentPageInput");
+
+    let page=Number(input.value);
+
+    page=Math.max(0,Math.min(book.pages,page));
+
+    const difference=page-book.currentPage;
+
+    book.currentPage=page;
+
+    if(difference>0){
+        data.xp+=difference;
+        recordReading(difference,0);
+    }
+
+    if(page>=book.pages){
+        completeBook(book);
+    }else if(page>0 && book.status==="want"){
+        book.status="reading";
+    }
+
+    saveData();
+
+    showToast("Je leespositie is opgeslagen.");
+}
+
+function saveBookDetails(id){
+
+    const book=data.books.find(b=>b.id===id);
+
+    if(!book) return;
+
+    const oldRating=book.rating;
+
+    book.rating=Number(document.getElementById("detailRating").value);
+
+    book.review=document.getElementById("detailReview").value;
+    book.notes=document.getElementById("detailNotes").value;
+    book.thoughts=document.getElementById("detailThoughts").value;
+    book.favoriteQuote=document.getElementById("detailQuote").value;
+
+    if(oldRating===0 && book.rating>0){
+        data.xp+=10;
+    }
+
+    if(book.review.trim()){
+        data.xp+=5;
+    }
+
+    saveData();
+
+    showToast("Je boekdetails zijn opgeslagen. ✒️");
+}
+
+function deleteBook(id){
+
+    const book=data.books.find(b=>b.id===id);
+
+    if(!book) return;
+
+    if(!confirm(`Weet je zeker dat je "${book.title}" wilt verwijderen?`)){
+        return;
+    }
+
+    data.books=data.books.filter(b=>b.id!==id);
+
+    saveData();
+
+    showPage("library");
+
+    showToast("Boek verwijderd.");
+}
+
+/* STARS */
+
+function stars(rating){
+
+    rating=Number(rating)||0;
+
+    let result="";
+
+    for(let i=1;i<=5;i++){
+        result += i<=rating ? "★" : "☆";
+    }
+
+    return result;
+}
+
+/* DIARY */
+
+function populateDiaryBooks(){
+
+    const select=document.getElementById("diaryBook");
+
+    if(!select) return;
+
+    select.innerHTML=data.books.length
+        ? data.books.map(b=>`
+            <option value="${b.id}">
+                ${escapeHTML(b.title)}
+            </option>
+        `).join("")
+        : `<option value="">Voeg eerst een boek toe</option>`;
+}
+
+function addDiaryEntry(event){
+
+    event.preventDefault();
+
+    const bookId=Number(document.getElementById("diaryBook").value);
+
+    const book=data.books.find(b=>b.id===bookId);
+
+    const entry={
+        id:Date.now(),
+        bookId:bookId,
+        bookTitle:book ? book.title : "Algemene notitie",
+        type:document.getElementById("diaryType").value,
+        text:document.getElementById("diaryText").value.trim(),
+        date:new Date().toISOString()
+    };
+
+    data.diaryEntries.unshift(entry);
+
+    data.xp+=15;
+
+    document.getElementById("diaryText").value="";
+
+    saveData();
+
+    showToast("Notitie toegevoegd. +15 XP ✒️");
+}
+
+function renderDiary(){
+
+    const container=document.getElementById("diaryEntries");
+
+    if(!container) return;
+
+    if(data.diaryEntries.length===0){
+
+        container.innerHTML=`
+            <div style="text-align:center;padding:30px;color:#888">
+                <div style="font-size:40px">✒️</div>
+                <p>Je dagboek bevat nog geen brieven.</p>
+            </div>
+        `;
+
+        return;
+    }
+
+    container.innerHTML=data.diaryEntries.map(entry=>`
+
+        <div class="diary-entry">
+
+            <div class="diary-entry-head">
+
+                <div>
+                    <div class="entry-type">${escapeHTML(entry.type)}</div>
+                    <h3>${escapeHTML(entry.bookTitle)}</h3>
+                </div>
+
+                <small style="color:#999">
+                    ${formatDate(entry.date)}
+                </small>
+
+            </div>
+
+            <p>${escapeHTML(entry.text)}</p>
+
+            <button
+                class="btn danger small"
+                style="margin-top:10px"
+                onclick="deleteDiaryEntry(${entry.id})">
+                Verwijderen
+            </button>
+
+        </div>
+
+    `).join("");
+}
+
+function deleteDiaryEntry(id){
+
+    data.diaryEntries=data.diaryEntries.filter(e=>e.id!==id);
+
+    saveData();
+
+    showToast("Notitie verwijderd.");
+}
+
+/* READING TIMER */
+
+let timerSeconds=25*60;
+let timerRunning=false;
+let timerInterval=null;
+let timerStartSeconds=timerSeconds;
+
+function populateTimerBooks(){
+
+    const select=document.getElementById("timerBook");
+
+    if(!select) return;
+
+    const reading=data.books.filter(b=>b.status==="reading");
+
+    const books=reading.length ? reading : data.books;
+
+    select.innerHTML=books.length
+        ? books.map(b=>`
+            <option value="${b.id}">
+                ${escapeHTML(b.title)}
+            </option>
+        `).join("")
+        : `<option value="">Geen boeken</option>`;
+
+    updateTimerBook();
+}
+
+function updateTimerBook(){
+
+    const select=document.getElementById("timerBook");
+    const label=document.getElementById("timerBookName");
+
+    if(!select || !label) return;
+
+    const book=data.books.find(b=>b.id===Number(select.value));
+
+    label.textContent=book
+        ? `${book.title} — ${book.author}`
+        : "Kies eerst een boek";
+}
+
+function setTimer(minutes,button){
+
+    stopTimer();
+
+    timerSeconds=minutes*60;
+    timerStartSeconds=timerSeconds;
+
+    document.querySelectorAll(".timer-choice").forEach(b=>b.classList.remove("active"));
+
+    if(button) button.classList.add("active");
+
+    updateTimerDisplay();
+}
+
+function updateTimerDisplay(){
+
+    const min=Math.floor(timerSeconds/60);
+    const sec=timerSeconds%60;
+
+    document.getElementById("timerDisplay").textContent =
+        `${String(min).padStart(2,"0")}:${String(sec).padStart(2,"0")}`;
+}
+
+function toggleTimer(){
+
+    if(timerRunning){
+        stopTimer();
+        return;
+    }
+
+    const select=document.getElementById("timerBook");
+
+    if(!select.value){
+        showToast("Kies eerst een boek.");
+        return;
+    }
+
+    timerRunning=true;
+
+    document.getElementById("timerStart").textContent="⏸ Pauze";
+
+    timerInterval=setInterval(()=>{
+
+        timerSeconds--;
+
+        updateTimerDisplay();
+
+        if(timerSeconds<=0){
+            finishTimer();
+        }
+
+    },1000);
+}
+
+function stopTimer(){
+
+    timerRunning=false;
+
+    clearInterval(timerInterval);
+
+    document.getElementById("timerStart").textContent="▶ Start";
+}
+
+function resetTimer(){
+
+    stopTimer();
+
+    timerSeconds=timerStartSeconds;
+
+    updateTimerDisplay();
+}
+
+function finishTimer(){
+
+    const elapsed=Math.round((timerStartSeconds)/60);
+
+    stopTimer();
+
+    timerSeconds=0;
+
+    updateTimerDisplay();
+
+    recordReading(0,elapsed);
+
+    data.xp+=elapsed;
+
+    saveData();
+
+    showToast(`Leesmoment voltooid! +${elapsed} XP ⏳`);
+
+    setTimeout(()=>{
+        resetTimer();
+    },1000);
+}
+
+/* READING HISTORY */
+
+function recordReading(pages,minutes){
+
+    const key=localDateKey();
+
+    if(!data.readingHistory[key]){
+        data.readingHistory[key]={
+            pages:0,
+            minutes:0
+        };
+    }
+
+    data.readingHistory[key].pages += Number(pages)||0;
+    data.readingHistory[key].minutes += Number(minutes)||0;
+}
+
+function getTotalPagesRead(){
+
+    return Object.values(data.readingHistory)
+        .reduce((sum,d)=>sum+(Number(d.pages)||0),0);
+}
+
+function getTotalMinutes(){
+
+    return Object.values(data.readingHistory)
+        .reduce((sum,d)=>sum+(Number(d.minutes)||0),0);
+}
+
+function getStreak(){
+
+    let streak=0;
+    let date=new Date();
+
+    const today=localDateKey(date);
+
+    if(!data.readingHistory[today] ||
+       (
+           data.readingHistory[today].pages===0 &&
+           data.readingHistory[today].minutes===0
+       )
+    ){
+        date.setDate(date.getDate()-1);
+    }
+
+    while(true){
+
+        const key=localDateKey(date);
+        const entry=data.readingHistory[key];
+
+        if(
+            entry &&
+            ((entry.pages||0)>0 || (entry.minutes||0)>0)
+        ){
+            streak++;
+            date.setDate(date.getDate()-1);
+        }else{
+            break;
+        }
+    }
+
+    return streak;
+}
+
+/* GOALS */
+
+function saveGoals(){
+
+    data.goals.yearBooks=Number(document.getElementById("goalYearBooks").value)||1;
+    data.goals.monthBooks=Number(document.getElementById("goalMonthBooks").value)||1;
+    data.goals.dailyMinutes=Number(document.getElementById("goalDailyMinutes").value)||1;
+    data.goals.weeklyPages=Number(document.getElementById("goalWeeklyPages").value)||1;
+
+    saveData();
+
+    showToast("Je leesdoelen zijn opgeslagen. 🎯");
+}
+
+function getReadThisYear(){
+
+    const year=new Date().getFullYear();
+
+    return data.books.filter(b=>
+        b.status==="read" &&
+        new Date(b.createdAt).getFullYear()===year
+    ).length;
+}
+
+function getReadThisMonth(){
+
+    const now=new Date();
+
+    return data.books.filter(b=>{
+        if(b.status!=="read") return false;
+
+        const date=new Date(b.createdAt);
+
+        return date.getFullYear()===now.getFullYear() &&
+               date.getMonth()===now.getMonth();
+    }).length;
+}
+
+function getWeekPages(){
+
+    let total=0;
+
+    const now=new Date();
+
+    for(let i=0;i<7;i++){
+
+        const date=new Date(now);
+
+        date.setDate(now.getDate()-i);
+
+        const key=localDateKey(date);
+
+        total += data.readingHistory[key]?.pages || 0;
+    }
+
+    return total;
+}
+
+function renderGoals(){
+
+    document.getElementById("goalYearBooks").value=data.goals.yearBooks;
+    document.getElementById("goalMonthBooks").value=data.goals.monthBooks;
+    document.getElementById("goalDailyMinutes").value=data.goals.dailyMinutes;
+    document.getElementById("goalWeeklyPages").value=data.goals.weeklyPages;
+
+    const today=data.readingHistory[localDateKey()] || {};
+
+    const goals=[
+        {
+            name:"📚 Boeken dit jaar",
+            current:getReadThisYear(),
+            target:data.goals.yearBooks
+        },
+        {
+            name:"🌸 Boeken deze maand",
+            current:getReadThisMonth(),
+            target:data.goals.monthBooks
+        },
+        {
+            name:"⏳ Vandaag lezen",
+            current:today.minutes||0,
+            target:data.goals.dailyMinutes
+        },
+        {
+            name:"📖 Pagina's deze week",
+            current:getWeekPages(),
+            target:data.goals.weeklyPages
+        }
+    ];
+
+    document.getElementById("goalsList").innerHTML=goals.map(goal=>{
+
+        const percent=Math.min(
+            100,
+            Math.round((goal.current/goal.target)*100)
+        );
+
+        return `
+            <div class="card goal">
+
+                <div class="goal-head">
+
+                    <div class="goal-name">${goal.name}</div>
+
+                    <div class="goal-number">
+                        ${goal.current} / ${goal.target}
+                    </div>
+
+                </div>
+
+                <div class="progress">
+                    <div style="width:${percent}%"></div>
+                </div>
+
+                <small style="color:#888">${percent}% voltooid</small>
+
+            </div>
+        `;
+
+    }).join("");
+}
+
+/* CALENDAR */
+
+let calendarDate=new Date();
+
+function changeMonth(direction){
+
+    calendarDate.setMonth(calendarDate.getMonth()+direction);
+
+    renderCalendar();
+}
+
+function renderCalendar(){
+
+    const year=calendarDate.getFullYear();
+    const month=calendarDate.getMonth();
+
+    document.getElementById("calendarMonth").textContent=
+        calendarDate.toLocaleDateString("nl-NL",{
+            month:"long",
+            year:"numeric"
+        });
+
+    const container=document.getElementById("calendar");
+
+    const names=["Ma","Di","Wo","Do","Vr","Za","Zo"];
+
+    let html=names.map(n=>
+        `<div class="calendar-day-name">${n}</div>`
+    ).join("");
+
+    const firstDay=new Date(year,month,1).getDay();
+
+    const offset=firstDay===0 ? 6 : firstDay-1;
+
+    for(let i=0;i<offset;i++){
+        html+="<div></div>";
+    }
+
+    const days=new Date(year,month+1,0).getDate();
+
+    for(let day=1;day<=days;day++){
+
+        const date=new Date(year,month,day);
+
+        const key=localDateKey(date);
+
+        const entry=data.readingHistory[key];
+
+        const read=entry && ((entry.pages||0)>0 || (entry.minutes||0)>0);
+
+        const today=key===localDateKey();
+
+        html+=`
+            <div class="calendar-day ${read?"read-day":""} ${today?"today":""}">
+
+                <strong>${day}</strong>
+
+                ${
+                    read
+                    ? `
+                        <div class="calendar-pages">
+                            📖 ${entry.pages||0} p.
+                        </div>
+                        <div class="calendar-pages">
+                            ⏳ ${entry.minutes||0} min.
+                        </div>
+                    `
+                    : ""
+                }
+
+            </div>
+        `;
+    }
+
+    container.innerHTML=html;
+}
+
+/* BADGES */
+
+function renderBadges(){
+
+    const grid=document.getElementById("badgesGrid");
+
+    grid.innerHTML=badgeDefinitions.map(badge=>{
+
+        const unlocked=badge.check(data);
+
+        return `
+            <div class="card badge ${unlocked?"":"locked"}">
+
+                <div class="badge-icon">${badge.icon}</div>
+
+                <h3>${badge.name}</h3>
+
+                <p>${badge.desc}</p>
+
+                <div style="margin-top:8px;font-size:10px">
+                    ${unlocked ? "✓ Behaald" : "🔒 Nog te behalen"}
+                </div>
+
+            </div>
+        `;
+
+    }).join("");
+}
+
+/* STATS */
+
+function renderStats(){
+
+    const totalBooks=data.books.length;
+    const readBooks=data.books.filter(b=>b.status==="read").length;
+    const pages=getTotalPagesRead();
+    const minutes=getTotalMinutes();
+
+    document.getElementById("statTotalBooks").textContent=totalBooks;
+    document.getElementById("statReadBooks").textContent=readBooks;
+    document.getElementById("statPages").textContent=pages;
+    document.getElementById("statMinutes").textContent=minutes;
+
+    const rated=data.books.filter(b=>b.rating>0);
+
+    const average=rated.length
+        ? rated.reduce((sum,b)=>sum+b.rating,0)/rated.length
+        : 0;
+
+    document.getElementById("averageRating").textContent=
+        average ? average.toFixed(1)+" / 5" : "—";
+
+    document.getElementById("averageStars").textContent=
+        average ? stars(Math.round(average)) : "";
+
+    const genres={};
+
+    data.books.forEach(book=>{
+        if(book.genre){
+            genres[book.genre]=(genres[book.genre]||0)+1;
+        }
+    });
+
+    const favorite=Object.entries(genres)
+        .sort((a,b)=>b[1]-a[1])[0];
+
+    document.getElementById("favoriteGenre").textContent=
+        favorite ? favorite[0] : "—";
+
+    renderChart();
+}
+
+function renderChart(){
+
+    const chart=document.getElementById("statsChart");
+
+    const days=[];
+
+    for(let i=6;i>=0;i--){
+
+        const date=new Date();
+
+        date.setDate(date.getDate()-i);
+
+        const key=localDateKey(date);
+
+        days.push({
+            key,
+            label:date.toLocaleDateString("nl-NL",{weekday:"short"}),
+            pages:data.readingHistory[key]?.pages||0
+        });
+    }
+
+    const max=Math.max(...days.map(d=>d.pages),10);
+
+    chart.innerHTML=days.map(day=>{
+
+        const height=Math.max(
+            3,
+            (day.pages/max)*170
+        );
+
+        return `
+            <div class="bar-wrap">
+
+                <div class="bar-value">${day.pages}</div>
+
+                <div class="bar" style="height:${height}px"></div>
+
+                <div class="bar-label">${day.label}</div>
+
+            </div>
+        `;
+
+    }).join("");
+}
+
+/* HOME */
+
+function renderHome(){
+
+    document.getElementById("homeBooks").textContent=data.books.length;
+
+    document.getElementById("homePages").textContent=getTotalPagesRead();
+
+    document.getElementById("homeStreak").textContent=getStreak();
+
+    document.getElementById("homeXP").textContent=data.xp;
+
+    const today=data.readingHistory[localDateKey()] || {};
+
+    const mission=data.missionPages||10;
+
+    const progress=Math.min(
+        100,
+        Math.round(((today.pages||0)/mission)*100)
+    );
+
+    document.getElementById("missionNumber").textContent=mission;
+
+    document.getElementById("missionProgress").style.width=progress+"%";
+
+    const remaining=Math.max(
+        0,
+        mission-(today.pages||0)
+    );
+
+    document.getElementById("missionText").textContent=
+        remaining===0
+        ? "Missie voltooid! ✨"
+        : `Nog ${remaining} pagina's te gaan.`;
+
+    const current=data.books.find(b=>b.status==="reading");
+
+    const container=document.getElementById("homeCurrentBook");
+
+    if(!current){
+
+        container.innerHTML=`
+            <div style="text-align:center;padding:20px;color:#888">
+                <div style="font-size:45px">📖</div>
+                <p>Je leest momenteel geen boek.</p>
+                <button class="btn pink small" onclick="showPage('library')">
+                    Naar mijn boeken
+                </button>
+            </div>
+        `;
+
+        return;
+    }
+
+    const progressBook=getProgress(current);
+
+    container.innerHTML=`
+
+        <div class="current-book">
+
+            <div class="book-cover ${coverClass(current)}">
+                ${escapeHTML(current.title)}
+            </div>
+
+            <div class="book-info">
+
+                <h3>${escapeHTML(current.title)}</h3>
+
+                <p>${escapeHTML(current.author)}</p>
+
+                <div class="progress">
+                    <div style="width:${progressBook}%"></div>
+                </div>
+
+                <div class="progress-text">
+                    Pagina ${current.currentPage} van ${current.pages} · ${progressBook}%
+                </div>
+
+                <button
+                    class="btn secondary small"
+                    style="margin-top:12px"
+                    onclick="openBook(${current.id})">
+                    Boek openen
+                </button>
+
+            </div>
+
+        </div>
+    `;
+}
+
+/* PROFILE */
+
+function renderProfile(){
+
+    document.getElementById("profileName").value=data.profile.name;
+    document.getElementById("profileGenre").value=data.profile.genre;
+
+    document.getElementById("profileLevel").textContent=getLevel().name;
+
+    document.getElementById("profileXP").textContent=
+        `${data.xp} XP`;
+
+    document.getElementById("profileXPBar").style.width=
+        getLevelProgress()+"%";
+}
+
+function saveProfile(){
+
+    data.profile.name=document.getElementById("profileName").value.trim();
+    data.profile.genre=document.getElementById("profileGenre").value.trim();
+
+    saveData();
+
+    showToast("Profiel opgeslagen. ♡");
+}
+
+function resetData(){
+
+    if(!confirm("Weet je zeker dat je ALLE boeken, notities, doelen en statistieken wilt wissen?")){
+        return;
+    }
+
+    localStorage.removeItem(STORAGE_KEY);
+
+    data=defaultData();
+
+    refreshAll();
+
+    showPage("home");
+
+    showToast("De Society is opnieuw begonnen.");
+}
+
+/* SIDEBAR */
+
+function renderSidebar(){
+
+    document.getElementById("sideLevel").textContent=getLevel().name;
+
+    document.getElementById("sideXPBar").style.width=
+        getLevelProgress()+"%";
+
+    document.getElementById("sideXPText").textContent=
+        `${data.xp} XP`;
+}
+
+/* UTILITIES */
+
+function escapeHTML(value){
+
+    return String(value ?? "")
+        .replace(/&/g,"&amp;")
+        .replace(/</g,"&lt;")
+        .replace(/>/g,"&gt;")
+        .replace(/"/g,"&quot;")
+        .replace(/'/g,"&#039;");
+}
+
+/* DAILY MISSION */
+
+function checkMission(){
+
+    const today=localDateKey();
+
+    if(data.missionDate!==today){
+
+        data.missionDate=today;
+
+        /*
+          Small variation, but fixed for the entire day.
+          It does not randomly change every time the app updates.
+        */
+
+        const missions=[10,15,20,25,30];
+
+        const index=
+            Math.floor(
+                Number(today.replaceAll("-","")) % missions.length
+            );
+
+        data.missionPages=missions[index];
+
+        saveData();
+    }
+}
+
+/* REFRESH */
+
+function refreshAll(){
+
+    checkMission();
+
+    renderHome();
+    renderLibrary();
+    populateDiaryBooks();
+    renderDiary();
+    populateTimerBooks();
+    renderGoals();
+    renderCalendar();
+    renderBadges();
+    renderStats();
+    renderProfile();
+    renderSidebar();
+
+    const date=new Date();
+
+    document.getElementById("todayDate").textContent=
+        date.toLocaleDateString("nl-NL",{
+            weekday:"long",
+            day:"numeric",
+            month:"long"
+        });
+}
+
+/* INITIALIZE */
+
+checkMission();
+refreshAll();
+updateTimerDisplay();
+
+</script>
+
+<script>
+if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => {
+        navigator.serviceWorker.register("./sw.js").catch(err => {
+            console.log("Service worker kon niet worden geregistreerd:", err);
+        });
+    });
+}
+</script>
+</body>
+</html>
